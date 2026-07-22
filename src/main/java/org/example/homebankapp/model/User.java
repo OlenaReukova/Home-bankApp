@@ -14,6 +14,6 @@ public class User {
     @Id
     private String id;
     private String firstName;
-    private String secondName;
+    private String lastName;
     private BigDecimal balance;
 }
