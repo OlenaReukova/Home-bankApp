@@ -1,6 +1,5 @@
 package org.example.homebankapp.service;
 
-import lombok.AllArgsConstructor;
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.dto.UserMapper;
 import org.example.homebankapp.model.User;
@@ -20,8 +19,9 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    public User create(UserDto userDto) {
+    public UserDto create(UserDto userDto) {
         User user = userMapper.toEntity(userDto);
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        return userMapper.toDto(savedUser);
     }
 }
