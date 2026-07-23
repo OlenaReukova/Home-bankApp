@@ -15,5 +15,6 @@ public class User {
     private String id;
     private String firstName;
     private String lastName;
-    private BigDecimal balance;
+    private String email;
+    private String phoneNumber;
 }
