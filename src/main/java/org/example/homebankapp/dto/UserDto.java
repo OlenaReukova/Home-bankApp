@@ -11,7 +11,9 @@ public record UserDto(
         String firstName,
         @NotBlank
         String lastName,
-        @NotNull(message = "Balance is required")
-        @DecimalMin(value = "0.01", message = "Balance must be at least 0.01")
-        BigDecimal balance) {
+        @NotBlank
+        String email,
+        @NotBlank
+        String phoneNumber
+        ) {
 }

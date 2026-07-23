@@ -10,7 +10,8 @@ public interface UserMapper {
     @Mapping(target= "id", ignore = true)
     @Mapping(source = "firstName" , target = "firstName")
     @Mapping(source = "lastName", target = "lastName")
-    @Mapping(source = "balance", target = "balance")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "phoneNumber", target = "phoneNumber")
 
     User toEntity (UserDto dto);
 
