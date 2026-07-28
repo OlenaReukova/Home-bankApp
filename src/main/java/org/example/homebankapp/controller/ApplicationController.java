@@ -1,5 +1,6 @@
 package org.example.homebankapp.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.service.UserService;
@@ -20,7 +21,7 @@ public class ApplicationController {
     private final UserService userService;
 
     @PostMapping("/user")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> createUser(@Valid  @RequestBody UserDto userDto){
         UserDto createdUser = userService.create(userDto);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
