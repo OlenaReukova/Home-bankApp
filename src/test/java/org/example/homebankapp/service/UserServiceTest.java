@@ -13,9 +13,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -61,5 +63,37 @@ class UserServiceTest {
         assertEquals("Doll", result.lastName());
         assertEquals("june1x@gmail.com", result.email());
         assertEquals("0723498098", result.phoneNumber());
+    }
+
+    @Test
+    void updateUser_shouldUpdateAndReturnUser() {
+        User existingUser = UserTestUtil.validUser();
+        existingUser.setId("1001");
+
+        UserDto updateDto = UserTestUtil.anotherValidUserDto();
+
+        when(userRepository.findById("1001")).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserDto result = userService.updateUser("1001", updateDto);
+
+        assertEquals("Tom", result.firstName());
+        assertEquals("Wills", result.lastName());
+
+        verify(userRepository).save(existingUser);
+    }
+
+    @Test
+    void updateUser_shouldThrowWhenUserIdNotFound() {
+        UserDto updateDto = UserTestUtil.anotherValidUserDto();
+
+        when(userRepository.findById("1")).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.updateUser("1", updateDto));
+
+        assertEquals("User not found 1", exception.getMessage());
+
+        verify(userRepository).findById("1");
+        verify(userRepository, never()).save(any());
     }
 }
