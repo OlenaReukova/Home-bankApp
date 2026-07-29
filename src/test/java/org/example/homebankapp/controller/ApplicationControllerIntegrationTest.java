@@ -34,7 +34,7 @@ public class ApplicationControllerIntegrationTest {
     }
 
     private String url(String path) {
-        return "http://localhost:" + port + "/bank/user" + path;
+        return "http://localhost:" + port + "/bank/users" + path;
     }
 
     @Test

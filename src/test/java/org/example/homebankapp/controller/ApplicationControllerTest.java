@@ -38,7 +38,7 @@ class ApplicationControllerTest {
 
         when(userService.create(any(UserDto.class))).thenReturn(userDto);
 
-        mockMvc.perform(post("/bank/user")
+        mockMvc.perform(post("/bank/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(UserTestUtil.toJson(userDto)))
                 .andExpect(status().isCreated())
@@ -54,7 +54,7 @@ class ApplicationControllerTest {
 
         when(userService.create(any(UserDto.class))).thenReturn(invalidUserDto);
 
-        mockMvc.perform(post("/bank/user")
+        mockMvc.perform(post("/bank/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(UserTestUtil.toJson(invalidUserDto))
                 )
