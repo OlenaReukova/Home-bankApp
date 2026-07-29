@@ -19,7 +19,7 @@ public class ApplicationController {
 
     private final UserService userService;
 
-    @PostMapping("/user")
+    @PostMapping("/users")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
         UserDto createdUser = userService.create(userDto);
         return ResponseEntity
