@@ -16,7 +16,7 @@ public class UserService {
     private final UserMapper userMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper){
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
@@ -32,5 +32,16 @@ public class UserService {
                 .stream()
                 .map(userMapper::toDto)
                 .toList();
+    }
+
+    public UserDto updateUser(String id, UserDto userDto) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found " + id));
+
+        userMapper.updateEntity(userDto, existingUser);
+
+        User updateUser = userRepository.save(existingUser);
+        return userMapper.toDto(updateUser);
+
     }
 }

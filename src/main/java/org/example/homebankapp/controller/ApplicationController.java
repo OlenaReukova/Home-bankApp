@@ -32,4 +32,9 @@ public class ApplicationController {
         List<UserDto> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<UserDto> updateUser(@PathVariable String id, @Valid @RequestBody UserDto dto){
+        return ResponseEntity.ok(userService.updateUser(id, dto));
+    }
 }
