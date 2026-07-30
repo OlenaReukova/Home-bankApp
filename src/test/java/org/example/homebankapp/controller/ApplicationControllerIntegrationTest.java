@@ -64,4 +64,45 @@ public class ApplicationControllerIntegrationTest {
         User saved = userRepository.findAll().getFirst();
         assertEquals("June", saved.getFirstName());
     }
+
+    @Test
+    void updateUser_shouldUpdateExistingUser() throws Exception {
+        User existingUser = UserTestUtil.validUser();
+        User savedUser = userRepository.save(existingUser);
+
+        UserDto updateDto = UserTestUtil.anotherValidUserDto();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> request = new HttpEntity<>(
+                UserTestUtil.toJson(updateDto),
+                headers
+        );
+
+        ResponseEntity<UserDto> response = restTemplate.exchange(
+                url("/" + savedUser.getId()),
+                HttpMethod.PUT,
+                request,
+                UserDto.class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+
+        UserDto body = response.getBody();
+
+        assertEquals("Tom", body.firstName());
+        assertEquals("Wills", body.lastName());
+        assertEquals("tom2@gmail.com", body.email());
+        assertEquals("0723498666", body.phoneNumber());
+
+        User updatedUser = userRepository.findById(savedUser.getId())
+                .orElseThrow();
+
+        assertEquals("Tom", updatedUser.getFirstName());
+        assertEquals("Wills", updatedUser.getLastName());
+        assertEquals("tom2@gmail.com", updatedUser.getEmail());
+        assertEquals("0723498666", updatedUser.getPhoneNumber());
+    }
 }
