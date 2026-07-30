@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -68,7 +70,7 @@ class ApplicationControllerTest {
         when(userService.getAllUsers()).thenReturn(List.of(validUserDto));
 
         mockMvc.perform(get("/bank/users")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].firstName").value("June"))
                 .andExpect(jsonPath("$[0].lastName").value("Doll"))
@@ -76,4 +78,36 @@ class ApplicationControllerTest {
                 .andExpect(jsonPath("$[0].phoneNumber").value("0723498098"));
     }
 
+    @Test
+    void updateUser_shouldReturnUpdateUser() throws Exception {
+        UserDto validUserDto = UserTestUtil.validUserDto();
+        UserDto res = new UserDto(
+                "updated firstName",
+                "updated lastName",
+                "updated email",
+                "updated phoneNumber"
+
+        );
+        when(userService.updateUser(eq("123"), any(UserDto.class))).thenReturn(res);
+
+        mockMvc.perform(put("/bank/users/{id}", "123")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(UserTestUtil.toJson(validUserDto))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("updated firstName"))
+                .andExpect(jsonPath("$.lastName").value("updated lastName"))
+                .andExpect(jsonPath("$.email").value("updated email"))
+                .andExpect(jsonPath("$.phoneNumber").value("updated phoneNumber"));
+
+        verify(userService).updateUser(eq("123"), any(UserDto.class));
+    }
+
+    @Test
+    void updateUser_shouldReturnBadRequestWhenInputNotValid() throws Exception {
+        mockMvc.perform(put("/bank/users/{id}", "123")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(UserTestUtil.toJson(new UserDto("", "", "",""))))
+                .andExpect(status().isBadRequest());
+    }
 }
