@@ -5,7 +5,6 @@ import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.model.User;
 import org.example.homebankapp.repository.UserRepository;
 import org.example.homebankapp.util.UserTestUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -28,17 +27,13 @@ public class ApplicationControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    @AfterEach
-    void tearDown() {
-        userRepository.deleteAll();
-    }
-
     private String url(String path) {
         return "http://localhost:" + port + "/bank/users" + path;
     }
 
     @Test
     void create_thenReturnNewUser() {
+        long current = userRepository.count();
         UserDto newUserDto = UserTestUtil.validUserDto();
         String jsonUser = UserTestUtil.toJson(newUserDto);
         HttpHeaders headers = new HttpHeaders();
@@ -59,9 +54,9 @@ public class ApplicationControllerIntegrationTest {
         assertEquals("june1x@gmail.com", body.email());
         assertEquals("0723498098", body.phoneNumber());
 
-        assertEquals(1, userRepository.count());
+        assertEquals(current + 1, userRepository.count());
 
-        User saved = userRepository.findAll().getFirst();
+        User saved = userRepository.findAll().getLast();
         assertEquals("June", saved.getFirstName());
     }
 
@@ -182,4 +177,42 @@ public class ApplicationControllerIntegrationTest {
         assertTrue(response.getBody()
                 .contains("User not found with id: non-existent-id"));
     }
+
+    @Test
+    void deleteUser_shouldRemoveUserAndReturnNoContent() {
+        long current = userRepository.count();
+
+        User existingUser = UserTestUtil.validUser();
+        User savedUser = userRepository.save(existingUser);
+
+        assertEquals(current + 1, userRepository.count());
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                url("/" + savedUser.getId()),
+                HttpMethod.DELETE,
+                null,
+                Void.class
+        );
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertNull(response.getBody());
+
+        assertTrue(userRepository.findById(savedUser.getId()).isEmpty());
+    }
+
+    @Test
+    void deleteUser_shouldReturnNotFoundWhenUserDoesNotExist() {
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                url("/non-existent-id"),
+                HttpMethod.DELETE,
+                null,
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertTrue(response.getBody()
+                .contains("User not found with id: non-existent-id"));
+    }
+
 }
