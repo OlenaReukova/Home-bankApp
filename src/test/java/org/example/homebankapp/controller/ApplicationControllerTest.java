@@ -1,5 +1,6 @@
 package org.example.homebankapp.controller;
 
+import org.example.homebankapp.dto.UpdateUserRequest;
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.service.UserService;
 import org.example.homebankapp.util.UserTestUtil;
@@ -110,4 +111,37 @@ class ApplicationControllerTest {
                 .content(UserTestUtil.toJson(new UserDto("", "", "",""))))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void partialUpdateUser_shouldReturnUpdatedUser() throws Exception {
+
+        UpdateUserRequest request = new UpdateUserRequest(
+                "Tom",
+                null,
+                "tom.updated@gmail.com",
+                null
+        );
+
+        UserDto response = new UserDto(
+                "Tom",
+                "Doll",
+                "tom.updated@gmail.com",
+                "0723498098"
+        );
+
+        when(userService.partialUpdateUser(eq("123"), any(UpdateUserRequest.class)))
+                .thenReturn(response);
+
+        mockMvc.perform(patch("/bank/users/{id}", "123")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(UserTestUtil.toJson(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Tom"))
+                .andExpect(jsonPath("$.lastName").value("Doll"))
+                .andExpect(jsonPath("$.email").value("tom.updated@gmail.com"))
+                .andExpect(jsonPath("$.phoneNumber").value("0723498098"));
+
+        verify(userService).partialUpdateUser(eq("123"), any(UpdateUserRequest.class));
+    }
+
 }

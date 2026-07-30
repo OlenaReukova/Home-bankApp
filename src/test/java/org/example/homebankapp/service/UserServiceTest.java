@@ -1,5 +1,6 @@
 package org.example.homebankapp.service;
 
+import org.example.homebankapp.dto.UpdateUserRequest;
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.dto.UserMapper;
 import org.example.homebankapp.exception.UserNotFoundException;
@@ -96,4 +97,40 @@ class UserServiceTest {
         verify(userRepository).findById(invalidId);
         verify(userRepository, never()).save(any(User.class));
     }
+
+    @Test
+    void partialUpdateUser_shouldUpdateOnlyProvidedFields() {
+
+
+        User existingUser = UserTestUtil.validUser();
+        existingUser.setId("1001");
+
+        UpdateUserRequest request = new UpdateUserRequest(
+                "Tom",
+                null,
+                "tom.updated@gmail.com",
+                null
+        );
+
+        when(userRepository.findById("1001"))
+                .thenReturn(Optional.of(existingUser));
+
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserDto result = userService.partialUpdateUser("1001", request);
+
+        assertEquals("Tom", result.firstName());
+        assertEquals("Doll", result.lastName()); // unchanged
+        assertEquals("tom.updated@gmail.com", result.email());
+        assertEquals("0723498098", result.phoneNumber()); // unchanged
+
+        assertEquals("Tom", existingUser.getFirstName());
+        assertEquals("Doll", existingUser.getLastName());
+        assertEquals("tom.updated@gmail.com", existingUser.getEmail());
+        assertEquals("0723498098", existingUser.getPhoneNumber());
+
+        verify(userRepository).save(existingUser);
+    }
+
 }

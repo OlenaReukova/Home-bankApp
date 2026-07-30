@@ -2,6 +2,7 @@ package org.example.homebankapp.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.example.homebankapp.dto.UpdateUserRequest;
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,14 @@ public class ApplicationController {
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable String id, @Valid @RequestBody UserDto dto){
+    public ResponseEntity<UserDto> updateUser(@PathVariable String id, @Valid @RequestBody UserDto dto) {
         return ResponseEntity.ok(userService.updateUser(id, dto));
+    }
+
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<UserDto> partialUpdateUser(@PathVariable String id, @RequestBody UpdateUserRequest request) {
+        UserDto updateUser = userService.partialUpdateUser(id, request);
+
+        return ResponseEntity.ok(updateUser);
     }
 }
