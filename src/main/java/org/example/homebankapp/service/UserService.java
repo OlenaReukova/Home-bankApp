@@ -67,4 +67,11 @@ public class UserService {
 
         return userMapper.toDto(userRepository.save(existingUser));
     }
+
+    public void deleteUser(String id) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException(id);
+        }
+        userRepository.deleteById(id);
+    }
 }

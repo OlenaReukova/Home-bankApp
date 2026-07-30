@@ -133,4 +133,25 @@ class UserServiceTest {
         verify(userRepository).save(existingUser);
     }
 
+    @Test
+    void deleteUser_shouldDeleteById_whenValidId() {
+        when(userRepository.existsById(anyString()))
+                .thenReturn(true);
+        doNothing().when(userRepository).deleteById(anyString());
+
+        userService.deleteUser("abc-123");
+
+        verify(userRepository, times(1))
+                .deleteById(anyString());
+    }
+
+    @Test
+    void deleteUser_shouldThrowException_whenInvalidId() {
+        when(userRepository.existsById(anyString()))
+                .thenReturn(false);
+
+        assertThrows(UserNotFoundException.class,
+                () -> userService.deleteUser("abc-123"));
+    }
+
 }
