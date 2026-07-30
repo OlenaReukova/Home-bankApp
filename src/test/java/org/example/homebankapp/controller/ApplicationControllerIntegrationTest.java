@@ -1,5 +1,6 @@
 package org.example.homebankapp.controller;
 
+import org.example.homebankapp.dto.UpdateUserRequest;
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.model.User;
 import org.example.homebankapp.repository.UserRepository;
@@ -13,8 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureTestRestTemplate
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -104,5 +104,82 @@ public class ApplicationControllerIntegrationTest {
         assertEquals("Wills", updatedUser.getLastName());
         assertEquals("tom2@gmail.com", updatedUser.getEmail());
         assertEquals("0723498666", updatedUser.getPhoneNumber());
+    }
+
+    @Test
+    void partialUpdateUser_shouldUpdateOnlyProvidedFields() {
+
+        User existingUser = UserTestUtil.validUser();
+        User savedUser = userRepository.save(existingUser);
+
+        UpdateUserRequest request = new UpdateUserRequest(
+                "Tom",
+                null,
+                "updated@gmail.com",
+                null
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(
+                UserTestUtil.toJson(request),
+                headers
+        );
+
+        ResponseEntity<UserDto> response = restTemplate.exchange(
+                url("/" + savedUser.getId()),
+                HttpMethod.PATCH,
+                entity,
+                UserDto.class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+
+        UserDto body = response.getBody();
+
+        assertEquals("Tom", body.firstName());
+        assertEquals("Doll", body.lastName());
+        assertEquals("updated@gmail.com", body.email());
+        assertEquals("0723498098", body.phoneNumber());
+
+        User updatedUser = userRepository.findById(savedUser.getId())
+                .orElseThrow();
+
+        assertEquals("Tom", updatedUser.getFirstName());
+        assertEquals("Doll", updatedUser.getLastName());
+        assertEquals("updated@gmail.com", updatedUser.getEmail());
+        assertEquals("0723498098", updatedUser.getPhoneNumber());
+    }
+
+    @Test
+    void partialUpdateUser_shouldReturnNotFoundWhenUserDoesNotExist() {
+
+        UpdateUserRequest request = new UpdateUserRequest(
+                "Tom",
+                null,
+                null,
+                null
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(
+                UserTestUtil.toJson(request),
+                headers
+        );
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                url("/non-existent-id"),
+                HttpMethod.PATCH,
+                entity,
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertTrue(response.getBody()
+                .contains("User not found with id: non-existent-id"));
     }
 }
