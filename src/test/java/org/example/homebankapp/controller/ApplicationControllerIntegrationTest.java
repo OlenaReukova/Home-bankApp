@@ -5,7 +5,6 @@ import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.model.User;
 import org.example.homebankapp.repository.UserRepository;
 import org.example.homebankapp.util.UserTestUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -27,12 +26,6 @@ public class ApplicationControllerIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @AfterEach
-    void tearDown() {
-        userRepository.deleteAll();
-    }
-
     private String url(String path) {
         return "http://localhost:" + port + "/bank/users" + path;
     }
@@ -182,4 +175,39 @@ public class ApplicationControllerIntegrationTest {
         assertTrue(response.getBody()
                 .contains("User not found with id: non-existent-id"));
     }
+
+    @Test
+    void deleteUser_shouldRemoveUserAndReturnNoContent() {
+
+        User existingUser = UserTestUtil.validUser();
+        User savedUser = userRepository.save(existingUser);
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                url("/" + savedUser.getId()),
+                HttpMethod.DELETE,
+                null,
+                Void.class
+        );
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertNull(response.getBody());
+
+        assertTrue(userRepository.findById(savedUser.getId()).isEmpty());
+    }
+
+    @Test
+    void deleteUser_shouldReturnNotFoundWhenUserDoesNotExist() {
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                url("/non-existent-id"),
+                HttpMethod.DELETE,
+                null,
+                String.class
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertTrue(response.getBody()
+                .contains("User not found with id: non-existent-id"));
+    }
+
 }

@@ -45,4 +45,10 @@ public class ApplicationController {
 
         return ResponseEntity.ok(updateUser);
     }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -16,8 +16,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -142,6 +141,17 @@ class ApplicationControllerTest {
                 .andExpect(jsonPath("$.phoneNumber").value("0723498098"));
 
         verify(userService).partialUpdateUser(eq("123"), any(UpdateUserRequest.class));
+    }
+
+    @Test
+    void deleteUser_shouldReturnNoContent() throws Exception {
+
+        doNothing().when(userService).deleteUser("123");
+
+        mockMvc.perform(delete("/bank/users/{id}", "123"))
+                .andExpect(status().isNoContent());
+
+        verify(userService).deleteUser("123");
     }
 
 }
