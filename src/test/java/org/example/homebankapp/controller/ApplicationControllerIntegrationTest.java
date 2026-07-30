@@ -26,12 +26,14 @@ public class ApplicationControllerIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
+
     private String url(String path) {
         return "http://localhost:" + port + "/bank/users" + path;
     }
 
     @Test
     void create_thenReturnNewUser() {
+        long current = userRepository.count();
         UserDto newUserDto = UserTestUtil.validUserDto();
         String jsonUser = UserTestUtil.toJson(newUserDto);
         HttpHeaders headers = new HttpHeaders();
@@ -52,9 +54,9 @@ public class ApplicationControllerIntegrationTest {
         assertEquals("june1x@gmail.com", body.email());
         assertEquals("0723498098", body.phoneNumber());
 
-        assertEquals(1, userRepository.count());
+        assertEquals(current + 1, userRepository.count());
 
-        User saved = userRepository.findAll().getFirst();
+        User saved = userRepository.findAll().getLast();
         assertEquals("June", saved.getFirstName());
     }
 
@@ -178,9 +180,12 @@ public class ApplicationControllerIntegrationTest {
 
     @Test
     void deleteUser_shouldRemoveUserAndReturnNoContent() {
+        long current = userRepository.count();
 
         User existingUser = UserTestUtil.validUser();
         User savedUser = userRepository.save(existingUser);
+
+        assertEquals(current + 1, userRepository.count());
 
         ResponseEntity<Void> response = restTemplate.exchange(
                 url("/" + savedUser.getId()),
