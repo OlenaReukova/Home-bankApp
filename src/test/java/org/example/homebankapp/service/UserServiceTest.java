@@ -2,6 +2,7 @@ package org.example.homebankapp.service;
 
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.dto.UserMapper;
+import org.example.homebankapp.exception.UserNotFoundException;
 import org.example.homebankapp.model.User;
 import org.example.homebankapp.repository.UserRepository;
 import org.example.homebankapp.util.UserTestUtil;
@@ -85,15 +86,14 @@ class UserServiceTest {
 
     @Test
     void updateUser_shouldThrowWhenUserIdNotFound() {
+        String invalidId = "non-existent-id";
         UserDto updateDto = UserTestUtil.anotherValidUserDto();
 
-        when(userRepository.findById("1")).thenReturn(Optional.empty());
+        when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.updateUser("1", updateDto));
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> userService.updateUser(invalidId, updateDto));
 
-        assertEquals("User not found 1", exception.getMessage());
-
-        verify(userRepository).findById("1");
-        verify(userRepository, never()).save(any());
+        verify(userRepository).findById(invalidId);
+        verify(userRepository, never()).save(any(User.class));
     }
 }

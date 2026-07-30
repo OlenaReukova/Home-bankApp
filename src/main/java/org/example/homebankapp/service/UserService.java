@@ -2,6 +2,7 @@ package org.example.homebankapp.service;
 
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.dto.UserMapper;
+import org.example.homebankapp.exception.UserNotFoundException;
 import org.example.homebankapp.model.User;
 import org.example.homebankapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class UserService {
 
     public UserDto updateUser(String id, UserDto userDto) {
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found " + id));
+                .orElseThrow(() -> new UserNotFoundException(id));
 
         userMapper.updateEntity(userDto, existingUser);
 
