@@ -72,6 +72,7 @@ public class UserService {
     }
 
     public void deleteUser(String id) {
+        log.info("Deleting user id={}", id);
         if (!userRepository.existsById(id)) {
             throw new UserNotFoundException(id);
         }
