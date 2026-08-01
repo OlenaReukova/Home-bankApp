@@ -1,5 +1,6 @@
 package org.example.homebankapp.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.homebankapp.dto.UpdateUserRequest;
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.dto.UserMapper;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -24,6 +26,7 @@ public class UserService {
     }
 
     public UserDto create(UserDto userDto) {
+        log.info("Creating user");
         User user = userMapper.toEntity(userDto);
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
