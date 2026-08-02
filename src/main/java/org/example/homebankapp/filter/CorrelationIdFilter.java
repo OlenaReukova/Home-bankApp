@@ -34,9 +34,6 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } finally {
-            // IMPORTANT: MDC must be cleared here.
-            // Tomcat reuses threads — if you skip this, the next request
-            // on this thread inherits the previous correlation ID.
             MDC.clear();
         }
     }

@@ -3,11 +3,13 @@ package org.example.homebankapp.service;
 import org.example.homebankapp.dto.UpdateUserRequest;
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.dto.UserMapper;
+import org.example.homebankapp.exception.NoChangesException;
 import org.example.homebankapp.exception.UserNotFoundException;
 import org.example.homebankapp.model.User;
 import org.example.homebankapp.repository.UserRepository;
 import org.example.homebankapp.util.UserTestUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -17,18 +19,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
+    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
     @Mock
     private UserRepository userRepository;
-
-    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
-
     private UserService userService;
 
     @BeforeEach
@@ -132,6 +132,57 @@ class UserServiceTest {
 
         verify(userRepository).save(existingUser);
     }
+
+    @Test
+    void partialUpdateUser_shouldUpdateAllAttributes() {
+        User existingUser = UserTestUtil.validUser();
+        existingUser.setId("1001");
+
+        var request = new UpdateUserRequest("Tom", "Zencke", "tom.updated@gmail.com", "142554");
+
+        when(userRepository.findById("1001")).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        var result = userService.partialUpdateUser("1001", request);
+
+        var expectedUser = new UserDto("Tom", "Zencke", "tom.updated@gmail.com", "142554");
+        assertEquals(expectedUser, result, "All attributes are changed");
+
+        verify(userRepository).save(existingUser);
+    }
+
+    @Test
+    @DisplayName("Given all attributes When all are null Then throws exception")
+    void partialUpdateUser_shouldThrow() {
+        User existingUser = UserTestUtil.validUser();
+        existingUser.setId("1001");
+
+        var request = new UpdateUserRequest(null, null, null, null);
+        when(userRepository.findById("1001")).thenReturn(Optional.of(existingUser));
+
+        assertThrows(NoChangesException.class, () -> userService.partialUpdateUser("1001", request));
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Given all attributes When empty Then throws exception")
+    void partialUpdateUser_given_empty_shouldThrow() {
+        User existingUser = UserTestUtil.validUser();
+        existingUser.setId("1001");
+
+        UpdateUserRequest request = new UpdateUserRequest(
+                "",
+                "",
+                "",
+                ""
+        );
+
+        when(userRepository.findById("1001")).thenReturn(Optional.of(existingUser));
+
+        assertThrows(NoChangesException.class, () -> userService.partialUpdateUser("1001", request));
+        verify(userRepository, never()).save(any());
+    }
+
 
     @Test
     void deleteUser_shouldDeleteById_whenValidId() {

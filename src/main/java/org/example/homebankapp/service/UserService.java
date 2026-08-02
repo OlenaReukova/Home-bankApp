@@ -4,11 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.homebankapp.dto.UpdateUserRequest;
 import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.dto.UserMapper;
+import org.example.homebankapp.exception.NoChangesException;
 import org.example.homebankapp.exception.UserNotFoundException;
 import org.example.homebankapp.model.User;
 import org.example.homebankapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -51,7 +53,14 @@ public class UserService {
     }
 
     public UserDto partialUpdateUser(String id, UpdateUserRequest request) {
-        User existingUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        var existingUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+
+        if (!StringUtils.hasLength(request.firstName())
+                && !StringUtils.hasLength(request.lastName())
+                && !StringUtils.hasLength(request.email())
+                && !StringUtils.hasLength(request.phoneNumber())) {
+            throw new NoChangesException();
+        }
 
         if (request.firstName() != null && !request.firstName().isBlank()) {
             existingUser.setFirstName(request.firstName());
