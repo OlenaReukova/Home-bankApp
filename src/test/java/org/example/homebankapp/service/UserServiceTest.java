@@ -43,7 +43,7 @@ class UserServiceTest {
 
         when(userRepository.save(user)).thenReturn(user);
 
-        UserDto result = userService.create(userDto);
+        UserDto result = userService.createUser(userDto);
 
         assertNotNull(result);
         assertEquals("June", result.firstName());

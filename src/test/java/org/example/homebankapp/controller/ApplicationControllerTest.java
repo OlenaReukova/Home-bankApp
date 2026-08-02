@@ -5,10 +5,10 @@ import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.service.UserService;
 import org.example.homebankapp.util.UserTestUtil;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -38,7 +38,7 @@ class ApplicationControllerTest {
     void createUser_shouldReturnUser() throws Exception {
         UserDto userDto = UserTestUtil.validUserDto();
 
-        when(userService.create(any(UserDto.class))).thenReturn(userDto);
+        when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
 
         mockMvc.perform(post("/bank/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -54,7 +54,7 @@ class ApplicationControllerTest {
     void createUser_shouldReturnBadRequestWhenInputNotValid() throws Exception {
         UserDto invalidUserDto = UserTestUtil.userDtoWithBlankFirstName();
 
-        when(userService.create(any(UserDto.class))).thenReturn(invalidUserDto);
+        when(userService.createUser(any(UserDto.class))).thenReturn(invalidUserDto);
 
         mockMvc.perform(post("/bank/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -106,8 +106,8 @@ class ApplicationControllerTest {
     @Test
     void updateUser_shouldReturnBadRequestWhenInputNotValid() throws Exception {
         mockMvc.perform(put("/bank/users/{id}", "123")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(UserTestUtil.toJson(new UserDto("", "", "",""))))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(UserTestUtil.toJson(new UserDto("", "", "", ""))))
                 .andExpect(status().isBadRequest());
     }
 

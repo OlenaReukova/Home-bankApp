@@ -27,7 +27,7 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    public UserDto create(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
         log.info("Creating user");
         User user = userMapper.toEntity(userDto);
         User savedUser = userRepository.save(user);
