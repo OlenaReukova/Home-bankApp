@@ -1,7 +1,7 @@
 package org.example.homebankapp.controller;
 
-import org.example.homebankapp.dto.UpdateUserRequest;
-import org.example.homebankapp.dto.UserDto;
+import org.example.homebankapp.controller.request.CreateUserRequest;
+import org.example.homebankapp.controller.request.UpdateUserRequest;
 import org.example.homebankapp.model.User;
 import org.example.homebankapp.repository.UserRepository;
 import org.example.homebankapp.util.UserTestUtil;
@@ -34,20 +34,20 @@ public class ApplicationControllerIntegrationTest {
     @Test
     void create_thenReturnNewUser() {
         long current = userRepository.count();
-        UserDto newUserDto = UserTestUtil.validUserDto();
-        String jsonUser = UserTestUtil.toJson(newUserDto);
+        CreateUserRequest newCreateUserRequest = UserTestUtil.validUserDto();
+        String jsonUser = UserTestUtil.toJson(newCreateUserRequest);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(jsonUser, headers);
 
-        ResponseEntity<UserDto> response = restTemplate.postForEntity(url(""), request, UserDto.class);
+        ResponseEntity<CreateUserRequest> response = restTemplate.postForEntity(url(""), request, CreateUserRequest.class);
         System.out.println("STATUS = " + response.getStatusCode());
         System.out.println("BODY   = " + response.getBody());
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
 
-        UserDto body = response.getBody();
+        CreateUserRequest body = response.getBody();
 
         assertEquals("June", body.firstName());
         assertEquals("Doll", body.lastName());
@@ -65,7 +65,7 @@ public class ApplicationControllerIntegrationTest {
         User existingUser = UserTestUtil.validUser();
         User savedUser = userRepository.save(existingUser);
 
-        UserDto updateDto = UserTestUtil.anotherValidUserDto();
+        CreateUserRequest updateDto = UserTestUtil.anotherValidUserDto();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -75,17 +75,17 @@ public class ApplicationControllerIntegrationTest {
                 headers
         );
 
-        ResponseEntity<UserDto> response = restTemplate.exchange(
+        ResponseEntity<CreateUserRequest> response = restTemplate.exchange(
                 url("/" + savedUser.getId()),
                 HttpMethod.PUT,
                 request,
-                UserDto.class
+                CreateUserRequest.class
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
 
-        UserDto body = response.getBody();
+        CreateUserRequest body = response.getBody();
 
         assertEquals("Tom", body.firstName());
         assertEquals("Wills", body.lastName());
@@ -122,17 +122,17 @@ public class ApplicationControllerIntegrationTest {
                 headers
         );
 
-        ResponseEntity<UserDto> response = restTemplate.exchange(
+        ResponseEntity<CreateUserRequest> response = restTemplate.exchange(
                 url("/" + savedUser.getId()),
                 HttpMethod.PATCH,
                 entity,
-                UserDto.class
+                CreateUserRequest.class
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
 
-        UserDto body = response.getBody();
+        CreateUserRequest body = response.getBody();
 
         assertEquals("Tom", body.firstName());
         assertEquals("Doll", body.lastName());
