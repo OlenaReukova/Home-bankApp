@@ -1,0 +1,168 @@
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: #ffffff;
+    margin: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 650px;
+    margin: 80px auto;
+    padding: 45px;
+    background: #ffffff;
+    border-radius: 24px;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 42px;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 35px;
+    font-weight: 700;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 16px 18px;
+    border: 1px solid #d6d6d6;
+    border-radius: 14px;
+    background: #fff;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+input:hover {
+    border-color: #999;
+}
+
+input:focus {
+    outline: none;
+    border-color: #26314B;
+}
+
+button:not(.delete-button) {
+    margin-top: 15px;
+    height: 55px;
+    border-radius: 999px;
+    border: none;
+    background: #26314B;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+
+button:not(.delete-button):hover {
+    background: #1d263b;
+}
+
+.error {
+    margin-top: -10px;
+    color: #555;
+    font-size: 14px;
+}
+
+.users-container {
+    max-width: 1000px;
+    margin: 80px auto;
+}
+
+table {
+    width:100%;
+    background:white;
+    border-radius:24px;
+    overflow:hidden;
+    border-spacing:0;
+    border-collapse: separate;
+}
+
+th {
+    text-align: left;
+    padding: 20px;
+    background: #26314B;
+    color: white;
+}
+
+td {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+.edit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 40px;
+    padding: 0 18px;
+
+    background: #26314B;
+    color: white;
+
+    border-radius: 8px;
+    border: none;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.edit-button:hover {
+    background: #1d263b;
+}
+
+
+.delete-button {
+    height: 40px;
+    padding: 0 18px;
+
+    background: white;
+    color: #26314B;
+
+    border: 1px solid #26314B;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+
+.delete-button:hover {
+    background: #26314B;
+    color: white;
+}
+.edit-button,
+.delete-button {
+    margin-right: 8px;
+}
+
+td form {
+    display: inline;
+}
