@@ -1,6 +1,7 @@
 package org.example.homebankapp.util;
 
-import org.example.homebankapp.dto.UserDto;
+import org.example.homebankapp.dto.CreateUserRequest;
+import org.example.homebankapp.dto.UserResponse;
 import org.example.homebankapp.model.User;
 import tools.jackson.databind.ObjectMapper;
 
@@ -15,16 +16,16 @@ public class UserTestUtil {
 
     ;
 
-    public static UserDto validUserDto() {
-        return new UserDto("June", "Doll", "june1x@gmail.com", "0723498098");
+    public static CreateUserRequest validUserDto() {
+        return new CreateUserRequest("June", "Doll", "june1x@gmail.com", "0723498098");
     }
 
-    public static UserDto anotherValidUserDto() {
-        return new UserDto("Tom", "Wills", "tom2@gmail.com", "0723498666");
+    public static CreateUserRequest anotherValidUserDto() {
+        return new CreateUserRequest("Tom", "Wills", "tom2@gmail.com", "0723498666");
     }
 
-    public static UserDto userDtoWithBlankFirstName() {
-        return new UserDto("", "Doll", "june1x@gmail.com", "0723498098");
+    public static CreateUserRequest userDtoWithBlankFirstName() {
+        return new CreateUserRequest("", "Doll", "june1x@gmail.com", "0723498098");
     }
 
     ;
@@ -37,6 +38,15 @@ public class UserTestUtil {
                 "0723498098",
                 LocalDateTime.of(2026, 04, 3, 10, 15, 30),
                 LocalDateTime.of(2026, 05, 3, 10, 15, 30)
+        );
+    }
+
+    public static UserResponse validUserResponse() {
+        return new UserResponse(
+                "June",
+                "Doll",
+                "june1x@gmail.com",
+                "0723498098"
         );
     }
 

@@ -2,8 +2,9 @@ package org.example.homebankapp.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.example.homebankapp.dto.CreateUserRequest;
 import org.example.homebankapp.dto.UpdateUserRequest;
-import org.example.homebankapp.dto.UserDto;
+import org.example.homebankapp.dto.UserResponse;
 import org.example.homebankapp.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,27 +22,27 @@ public class ApplicationController {
     private final UserService userService;
 
     @PostMapping("/users")
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
-        UserDto createdUser = userService.createUser(userDto);
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
+        UserResponse createdUserResponse = userService.createUser(createUserRequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(createdUser);
+                .body(createdUserResponse);
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserDto> users = userService.getAllUsers();
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserResponse> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable String id, @Valid @RequestBody UserDto dto) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable String id, @Valid @RequestBody CreateUserRequest dto) {
         return ResponseEntity.ok(userService.updateUser(id, dto));
     }
 
     @PatchMapping("/users/{id}")
-    public ResponseEntity<UserDto> partialUpdateUser(@PathVariable String id, @RequestBody UpdateUserRequest request) {
-        UserDto updateUser = userService.partialUpdateUser(id, request);
+    public ResponseEntity<UserResponse> partialUpdateUser(@PathVariable String id, @RequestBody UpdateUserRequest request) {
+        UserResponse updateUser = userService.partialUpdateUser(id, request);
 
         return ResponseEntity.ok(updateUser);
     }

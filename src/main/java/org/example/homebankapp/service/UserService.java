@@ -1,9 +1,10 @@
 package org.example.homebankapp.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.homebankapp.dto.CreateUserRequest;
 import org.example.homebankapp.dto.UpdateUserRequest;
-import org.example.homebankapp.dto.UserDto;
 import org.example.homebankapp.dto.UserMapper;
+import org.example.homebankapp.dto.UserResponse;
 import org.example.homebankapp.exception.NoChangesException;
 import org.example.homebankapp.exception.UserNotFoundException;
 import org.example.homebankapp.model.User;
@@ -27,32 +28,32 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    public UserDto createUser(UserDto userDto) {
+    public UserResponse createUser(CreateUserRequest createUserRequest) {
         log.info("Creating user");
-        User user = userMapper.toEntity(userDto);
+        User user = userMapper.toEntity(createUserRequest);
         User savedUser = userRepository.save(user);
-        return userMapper.toDto(savedUser);
+        return userMapper.toResponse(savedUser);
     }
 
-    public List<UserDto> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
                 .stream()
-                .map(userMapper::toDto)
+                .map(userMapper::toResponse)
                 .toList();
     }
 
-    public UserDto updateUser(String id, UserDto userDto) {
+    public UserResponse updateUser(String id, CreateUserRequest createUserRequest) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
-        userMapper.updateEntity(userDto, existingUser);
+        userMapper.updateEntity(createUserRequest, existingUser);
 
         User updateUser = userRepository.save(existingUser);
-        return userMapper.toDto(updateUser);
+        return userMapper.toResponse(updateUser);
 
     }
 
-    public UserDto partialUpdateUser(String id, UpdateUserRequest request) {
+    public UserResponse partialUpdateUser(String id, UpdateUserRequest request) {
         var existingUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
         if (!StringUtils.hasLength(request.firstName())
@@ -77,7 +78,7 @@ public class UserService {
             existingUser.setPhoneNumber(request.phoneNumber());
         }
 
-        return userMapper.toDto(userRepository.save(existingUser));
+        return userMapper.toResponse(userRepository.save(existingUser));
     }
 
     public void deleteUser(String id) {

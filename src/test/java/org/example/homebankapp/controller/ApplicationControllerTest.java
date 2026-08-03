@@ -1,7 +1,8 @@
 package org.example.homebankapp.controller;
 
+import org.example.homebankapp.dto.CreateUserRequest;
 import org.example.homebankapp.dto.UpdateUserRequest;
-import org.example.homebankapp.dto.UserDto;
+import org.example.homebankapp.dto.UserResponse;
 import org.example.homebankapp.service.UserService;
 import org.example.homebankapp.util.UserTestUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,13 +37,18 @@ class ApplicationControllerTest {
 
     @Test
     void createUser_shouldReturnUser() throws Exception {
-        UserDto userDto = UserTestUtil.validUserDto();
+        CreateUserRequest createUserRequest = UserTestUtil.validUserDto();
 
-        when(userService.createUser(any(UserDto.class))).thenReturn(userDto);
+        when(userService.createUser(any(CreateUserRequest.class))).thenReturn(new UserResponse(
+                "June",
+                "Doll",
+                "june1x@gmail.com",
+                "0723498098"
+        ));
 
         mockMvc.perform(post("/bank/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(UserTestUtil.toJson(userDto)))
+                        .content(UserTestUtil.toJson(createUserRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.firstName").value("June"))
                 .andExpect(jsonPath("$.lastName").value("Doll"))
@@ -52,22 +58,20 @@ class ApplicationControllerTest {
 
     @Test
     void createUser_shouldReturnBadRequestWhenInputNotValid() throws Exception {
-        UserDto invalidUserDto = UserTestUtil.userDtoWithBlankFirstName();
-
-        when(userService.createUser(any(UserDto.class))).thenReturn(invalidUserDto);
+        CreateUserRequest invalidCreateUserRequest = UserTestUtil.userDtoWithBlankFirstName();
 
         mockMvc.perform(post("/bank/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(UserTestUtil.toJson(invalidUserDto))
+                        .content(UserTestUtil.toJson(invalidCreateUserRequest))
                 )
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void getAllUsers_shouldReturnListOfUsers() throws Exception {
-        UserDto validUserDto = UserTestUtil.validUserDto();
+        CreateUserRequest validCreateUserRequest = UserTestUtil.validUserDto();
 
-        when(userService.getAllUsers()).thenReturn(List.of(validUserDto));
+        when(userService.getAllUsers()).thenReturn(List.of(UserTestUtil.validUserResponse()));
 
         mockMvc.perform(get("/bank/users")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -80,19 +84,19 @@ class ApplicationControllerTest {
 
     @Test
     void updateUser_shouldReturnUpdateUser() throws Exception {
-        UserDto validUserDto = UserTestUtil.validUserDto();
-        UserDto res = new UserDto(
+        CreateUserRequest validCreateUserRequest = UserTestUtil.validUserDto();
+        UserResponse res = new UserResponse(
                 "updated firstName",
                 "updated lastName",
                 "updated email",
                 "updated phoneNumber"
 
         );
-        when(userService.updateUser(eq("123"), any(UserDto.class))).thenReturn(res);
+        when(userService.updateUser(eq("123"), any(CreateUserRequest.class))).thenReturn(res);
 
         mockMvc.perform(put("/bank/users/{id}", "123")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(UserTestUtil.toJson(validUserDto))
+                        .content(UserTestUtil.toJson(validCreateUserRequest))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("updated firstName"))
@@ -100,14 +104,14 @@ class ApplicationControllerTest {
                 .andExpect(jsonPath("$.email").value("updated email"))
                 .andExpect(jsonPath("$.phoneNumber").value("updated phoneNumber"));
 
-        verify(userService).updateUser(eq("123"), any(UserDto.class));
+        verify(userService).updateUser(eq("123"), any(CreateUserRequest.class));
     }
 
     @Test
     void updateUser_shouldReturnBadRequestWhenInputNotValid() throws Exception {
         mockMvc.perform(put("/bank/users/{id}", "123")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(UserTestUtil.toJson(new UserDto("", "", "", ""))))
+                        .content(UserTestUtil.toJson(new CreateUserRequest("", "", "", ""))))
                 .andExpect(status().isBadRequest());
     }
 
@@ -121,7 +125,7 @@ class ApplicationControllerTest {
                 null
         );
 
-        UserDto response = new UserDto(
+        UserResponse response = new UserResponse(
                 "Tom",
                 "Doll",
                 "tom.updated@gmail.com",
