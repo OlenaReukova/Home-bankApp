@@ -1,4 +1,4 @@
-package org.example.homebankapp.dto;
+package org.example.homebankapp.controller.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

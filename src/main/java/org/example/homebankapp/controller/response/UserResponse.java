@@ -1,4 +1,4 @@
-package org.example.homebankapp.dto;
+package org.example.homebankapp.controller.response;
 
 public record UserResponse(
         String firstName,

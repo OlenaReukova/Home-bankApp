@@ -1,7 +1,7 @@
 package org.example.homebankapp.util;
 
-import org.example.homebankapp.dto.CreateUserRequest;
-import org.example.homebankapp.dto.UserResponse;
+import org.example.homebankapp.controller.request.CreateUserRequest;
+import org.example.homebankapp.controller.response.UserResponse;
 import org.example.homebankapp.model.User;
 import tools.jackson.databind.ObjectMapper;
 

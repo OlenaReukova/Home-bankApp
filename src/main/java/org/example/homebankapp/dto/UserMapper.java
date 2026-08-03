@@ -1,5 +1,7 @@
 package org.example.homebankapp.dto;
 
+import org.example.homebankapp.controller.request.CreateUserRequest;
+import org.example.homebankapp.controller.response.UserResponse;
 import org.example.homebankapp.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

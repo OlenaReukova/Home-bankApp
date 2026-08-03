@@ -2,9 +2,9 @@ package org.example.homebankapp.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.example.homebankapp.dto.CreateUserRequest;
-import org.example.homebankapp.dto.UpdateUserRequest;
-import org.example.homebankapp.dto.UserResponse;
+import org.example.homebankapp.controller.request.CreateUserRequest;
+import org.example.homebankapp.controller.request.UpdateUserRequest;
+import org.example.homebankapp.controller.response.UserResponse;
 import org.example.homebankapp.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

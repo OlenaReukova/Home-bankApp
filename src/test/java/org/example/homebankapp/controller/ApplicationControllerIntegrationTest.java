@@ -1,7 +1,7 @@
 package org.example.homebankapp.controller;
 
-import org.example.homebankapp.dto.CreateUserRequest;
-import org.example.homebankapp.dto.UpdateUserRequest;
+import org.example.homebankapp.controller.request.CreateUserRequest;
+import org.example.homebankapp.controller.request.UpdateUserRequest;
 import org.example.homebankapp.model.User;
 import org.example.homebankapp.repository.UserRepository;
 import org.example.homebankapp.util.UserTestUtil;

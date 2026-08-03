@@ -1,9 +1,9 @@
 package org.example.homebankapp.service;
 
-import org.example.homebankapp.dto.CreateUserRequest;
-import org.example.homebankapp.dto.UpdateUserRequest;
+import org.example.homebankapp.controller.request.CreateUserRequest;
+import org.example.homebankapp.controller.request.UpdateUserRequest;
+import org.example.homebankapp.controller.response.UserResponse;
 import org.example.homebankapp.dto.UserMapper;
-import org.example.homebankapp.dto.UserResponse;
 import org.example.homebankapp.exception.NoChangesException;
 import org.example.homebankapp.exception.UserNotFoundException;
 import org.example.homebankapp.model.User;
