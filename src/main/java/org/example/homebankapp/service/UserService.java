@@ -3,6 +3,7 @@ package org.example.homebankapp.service;
 import lombok.extern.slf4j.Slf4j;
 import org.example.homebankapp.controller.request.CreateUserRequest;
 import org.example.homebankapp.controller.request.UpdateUserRequest;
+import org.example.homebankapp.controller.response.AdminUserResponse;
 import org.example.homebankapp.controller.response.UserResponse;
 import org.example.homebankapp.dto.UserMapper;
 import org.example.homebankapp.exception.NoChangesException;
@@ -40,6 +41,26 @@ public class UserService {
                 .stream()
                 .map(userMapper::toResponse)
                 .toList();
+    }
+
+    public UserResponse getUserById(String id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        return userMapper.toResponse(user);
+    }
+
+    public AdminUserResponse getAdminUserById(String id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        return new AdminUserResponse(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getPhoneNumber()
+        );
     }
 
     public UserResponse updateUser(String id, CreateUserRequest createUserRequest) {
@@ -87,5 +108,19 @@ public class UserService {
             throw new UserNotFoundException(id);
         }
         userRepository.deleteById(id);
+    }
+
+    public List<AdminUserResponse> getAllUsersForAdmin() {
+
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new AdminUserResponse(
+                        user.getId(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.getPhoneNumber()
+                ))
+                .toList();
     }
 }

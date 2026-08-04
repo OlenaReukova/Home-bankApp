@@ -206,4 +206,37 @@ class UserServiceTest {
                 () -> userService.deleteUser("abc-123"));
     }
 
+    @Test
+    void getUserById_shouldReturnUser() {
+        User user = UserTestUtil.validUser();
+        user.setId("1001");
+
+        when(userRepository.findById("1001"))
+                .thenReturn(Optional.of(user));
+
+        UserResponse result = userService.getUserById("1001");
+
+        assertNotNull(result);
+        assertEquals("June", result.firstName());
+        assertEquals("Doll", result.lastName());
+        assertEquals("june1x@gmail.com", result.email());
+        assertEquals("0723498098", result.phoneNumber());
+
+        verify(userRepository).findById("1001");
+    }
+
+    @Test
+    void getUserById_shouldThrowWhenUserNotFound() {
+        String id = "1001";
+
+        when(userRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                UserNotFoundException.class,
+                () -> userService.getUserById(id)
+        );
+        verify(userRepository).findById(id);
+    }
+
 }
