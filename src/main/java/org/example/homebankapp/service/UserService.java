@@ -59,7 +59,8 @@ public class UserService {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
-                user.getPhoneNumber()
+                user.getPhoneNumber(),
+                user.getRole()
         );
     }
 
@@ -119,7 +120,8 @@ public class UserService {
                         user.getFirstName(),
                         user.getLastName(),
                         user.getEmail(),
-                        user.getPhoneNumber()
+                        user.getPhoneNumber(),
+                        user.getRole()
                 ))
                 .toList();
     }
