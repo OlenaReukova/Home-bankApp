@@ -2,6 +2,7 @@ package org.example.homebankapp.util;
 
 import org.example.homebankapp.controller.request.CreateUserRequest;
 import org.example.homebankapp.controller.response.UserResponse;
+import org.example.homebankapp.model.Role;
 import org.example.homebankapp.model.User;
 import tools.jackson.databind.ObjectMapper;
 
@@ -13,8 +14,6 @@ public class UserTestUtil {
 
     private UserTestUtil() {
     }
-
-    ;
 
     public static CreateUserRequest validUserDto() {
         return new CreateUserRequest("June", "Doll", "june1x@gmail.com", "0723498098");
@@ -28,14 +27,14 @@ public class UserTestUtil {
         return new CreateUserRequest("", "Doll", "june1x@gmail.com", "0723498098");
     }
 
-    ;
-
     public static User validUser() {
         return new User(null,
                 "June",
                 "Doll",
                 "june1x@gmail.com",
                 "0723498098",
+                "$2a$10$encodedPasswordHashForTest",
+                Role.USER,
                 LocalDateTime.of(2026, 04, 3, 10, 15, 30),
                 LocalDateTime.of(2026, 05, 3, 10, 15, 30)
         );

@@ -21,12 +21,17 @@ public class User {
     private String id;
     private String firstName;
     private String lastName;
+
     @Indexed(unique = true)
     private String email;
+
     private String phoneNumber;
-    private Role role = Role.USER;
+
     @JsonIgnore
     private String password;
+
+    private Role role = Role.USER;
+
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
