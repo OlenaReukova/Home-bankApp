@@ -9,7 +9,15 @@
 
 <body>
 <div class="users-container">
-    <h1>Users</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1 style="margin: 0;">Users</h1>
+        <div style="display: flex; gap: 12px;">
+            <a class="edit-button" th:href="@{/admin/users/create}">Create user</a>
+            <form method="post" th:action="@{/logout}" style="display: inline;">
+                <button class="delete-button" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
     <table>
         <tr>
             <th>First name</th>

@@ -8,10 +8,10 @@ import org.example.homebankapp.controller.response.UserResponse;
 import org.example.homebankapp.dto.UserMapper;
 import org.example.homebankapp.exception.NoChangesException;
 import org.example.homebankapp.exception.UserNotFoundException;
-import org.example.homebankapp.model.Role;
 import org.example.homebankapp.model.User;
 import org.example.homebankapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -126,20 +126,10 @@ public class UserService {
                 ))
                 .toList();
     }
-    public AdminUserResponse changeUserRole(String id, Role newRole)
-    {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
 
-        user.setRole(newRole);
-        User saved = userRepository.save(user);
-
-        return new AdminUserResponse(
-                saved.getId(),
-                saved.getFirstName(),
-                saved.getLastName(),
-                saved.getEmail(),
-                saved.getPhoneNumber(),
-                saved.getRole()
-        );
-    }}
+    public UserResponse getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+        return userMapper.toResponse(user);
+    }
+}

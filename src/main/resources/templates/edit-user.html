@@ -34,20 +34,29 @@
         <label>
             Last name
         </label>
-
         <input th:field="*{lastName}">
+        <p class="error"
+           th:errors="*{lastName}"
+           th:if="${#fields.hasErrors('lastName')}">
+        </p>
 
         <label>
             Email
         </label>
-
         <input th:field="*{email}">
+        <p class="error"
+           th:errors="*{email}"
+           th:if="${#fields.hasErrors('email')}">
+        </p>
 
         <label>
             Phone number
         </label>
-
         <input th:field="*{phoneNumber}">
+        <p class="error"
+           th:errors="*{phoneNumber}"
+           th:if="${#fields.hasErrors('phoneNumber')}">
+        </p>
 
         <button type="submit">
             Save changes

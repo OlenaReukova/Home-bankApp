@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -237,6 +238,37 @@ class UserServiceTest {
                 () -> userService.getUserById(id)
         );
         verify(userRepository).findById(id);
+    }
+
+    @Test
+    void getUserByEmail_shouldReturnUser_whenFound() {
+        User user = UserTestUtil.validUser();
+
+        when(userRepository.findByEmail("june1x@gmail.com"))
+                .thenReturn(Optional.of(user));
+
+        UserResponse result = userService.getUserByEmail("june1x@gmail.com");
+
+        assertNotNull(result);
+        assertEquals("June", result.firstName());
+        assertEquals("Doll", result.lastName());
+        assertEquals("june1x@gmail.com", result.email());
+        assertEquals("0723498098", result.phoneNumber());
+
+        verify(userRepository).findByEmail("june1x@gmail.com");
+    }
+
+    @Test
+    void getUserByEmail_shouldThrow_whenNotFound() {
+        String email = "unknown@bank.com";
+
+        when(userRepository.findByEmail(email))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UsernameNotFoundException.class,
+                () -> userService.getUserByEmail(email));
+
+        verify(userRepository).findByEmail(email);
     }
 
 }
