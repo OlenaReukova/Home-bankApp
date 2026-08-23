@@ -11,6 +11,8 @@ import org.mapstruct.MappingTarget;
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target= "role", ignore = true)
+    @Mapping(target= "password", ignore = true)
     @Mapping(source = "firstName", target = "firstName")
     @Mapping(source = "lastName", target = "lastName")
     @Mapping(source = "email", target = "email")
@@ -22,6 +24,8 @@ public interface UserMapper {
     UserResponse toResponse(User user);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target= "role", ignore = true)
+    @Mapping(target= "password", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateEntity(CreateUserRequest dto, @MappingTarget User user);

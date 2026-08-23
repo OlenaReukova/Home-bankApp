@@ -3,6 +3,11 @@ opencollection: 1.0.0
 info:
   name: Home-Bank-App
 bundled: false
+auth:
+  mode: basic
+  basic:
+    username: admin@bank.com
+    password: admin
 extensions:
   bruno:
     ignore:
