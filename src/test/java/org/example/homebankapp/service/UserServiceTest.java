@@ -147,7 +147,7 @@ class UserServiceTest {
 
         var result = userService.partialUpdateUser("1001", request);
 
-        var expectedUser = new UserResponse("Tom", "Zencke", "tom.updated@gmail.com", "142554");
+        var expectedUser = new UserResponse("1001", "Tom", "Zencke", "tom.updated@gmail.com", "142554");
         assertEquals(expectedUser, result, "All attributes are changed");
 
         verify(userRepository).save(existingUser);

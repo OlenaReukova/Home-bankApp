@@ -42,6 +42,7 @@ public class UserTestUtil {
 
     public static UserResponse validUserResponse() {
         return new UserResponse(
+                null,
                 "June",
                 "Doll",
                 "june1x@gmail.com",

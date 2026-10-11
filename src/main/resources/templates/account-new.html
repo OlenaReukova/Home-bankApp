@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>New Account</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Open New Account</h1>
+
+    <form method="post" th:action="@{/dashboard/accounts}">
+        <label>Currency</label>
+        <select name="currency">
+            <option th:each="c : ${currencies}"
+                    th:value="${c}"
+                    th:text="${c}">
+            </option>
+        </select>
+
+        <label>Initial Balance</label>
+        <input type="number" name="initialBalance" value="0" min="0" step="0.01"/>
+
+        <button type="submit">Create Account</button>
+    </form>
+
+    <a th:href="@{/dashboard}">Back to Dashboard</a>
+</div>
+</body>
+</html>

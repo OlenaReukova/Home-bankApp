@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Account Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Account Details</h1>
+
+    <p><strong>Number:</strong> <span th:text="${account.accountNumber}"></span></p>
+    <p><strong>Balance:</strong>
+        <span th:text="${account.balance}"></span>
+        <span th:text="${account.currency}"></span>
+    </p>
+
+    <div style="margin-top: 16px;">
+        <a th:href="@{/dashboard/accounts/{id}/deposit(id=${accountId})}">Deposit</a>
+        &nbsp;|&nbsp;
+        <a th:href="@{/dashboard/accounts/{id}/withdraw(id=${accountId})}">Withdraw</a>
+        &nbsp;|&nbsp;
+        <a th:href="@{/dashboard/accounts/{id}/transfer(id=${accountId})}">Transfer</a>
+    </div>
+
+    <h2>Transaction History</h2>
+
+    <p th:if="${transactions.empty}">No transactions yet.</p>
+
+    <table th:if="${!transactions.empty}">
+        <thead>
+        <tr>
+            <th>Direction</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>From / To</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${transactions}">
+            <td th:if="${t.fromAccountNumber == account.accountNumber}" style="color: red;">▼ OUT</td>
+            <td th:if="${t.fromAccountNumber != account.accountNumber}" style="color: green;">▲ IN</td>
+            <td th:text="${t.type}"></td>
+            <td th:text="${t.amount}"></td>
+            <td th:if="${t.fromAccountNumber == account.accountNumber}" th:text="${t.toAccountNumber != null ? t.toAccountNumber : '—'}"></td>
+            <td th:if="${t.fromAccountNumber != account.accountNumber}" th:text="${t.fromAccountNumber != null ? t.fromAccountNumber : '—'}"></td>
+            <td th:text="${#temporals.format(t.createdAt, 'dd MMM yyyy HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <br/>
+    <a th:href="@{/dashboard}">Back to Dashboard</a>
+</div>
+</body>
+</html>

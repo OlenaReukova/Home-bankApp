@@ -1,0 +1,22 @@
+info:
+  name: transfer
+  type: http
+  seq: 14
+
+http:
+  method: POST
+  url: "{{baseUrl}}/accounts/{{accountId}}/transfer"
+  body:
+    type: json
+    data: |-
+      {
+        "toAccountNumber": "ACC-XXXXXXXX",
+        "amount": 200.00
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

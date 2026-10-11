@@ -127,6 +127,10 @@ public class UserService {
                 .toList();
     }
 
+    public boolean userExistsById(String id) {
+        return userRepository.existsById(id);
+    }
+
     public UserResponse getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
