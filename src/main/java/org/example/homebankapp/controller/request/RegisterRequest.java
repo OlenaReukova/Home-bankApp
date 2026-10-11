@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record RegisterRequest (
-    @NotBlank(message = "Last name is required")
+    @NotBlank(message = "First name is required")
     @Size(min = 2, max = 50)
     String firstName,
 

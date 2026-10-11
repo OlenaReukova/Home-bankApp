@@ -40,6 +40,7 @@ class ApplicationControllerTest {
         CreateUserRequest createUserRequest = UserTestUtil.validUserDto();
 
         when(userService.createUser(any(CreateUserRequest.class))).thenReturn(new UserResponse(
+                null,
                 "June",
                 "Doll",
                 "june1x@gmail.com",
@@ -86,11 +87,11 @@ class ApplicationControllerTest {
     void updateUser_shouldReturnUpdateUser() throws Exception {
         CreateUserRequest validCreateUserRequest = UserTestUtil.validUserDto();
         UserResponse res = new UserResponse(
+                null,
                 "updated firstName",
                 "updated lastName",
                 "updated email",
                 "updated phoneNumber"
-
         );
         when(userService.updateUser(eq("123"), any(CreateUserRequest.class))).thenReturn(res);
 
@@ -126,6 +127,7 @@ class ApplicationControllerTest {
         );
 
         UserResponse response = new UserResponse(
+                null,
                 "Tom",
                 "Doll",
                 "tom.updated@gmail.com",

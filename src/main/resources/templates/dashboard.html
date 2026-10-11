@@ -10,8 +10,23 @@
 <body>
 <div class="container">
     <h1>Hello, <span th:text="${firstName}">User</span>!</h1>
-
     <p style="color: #555; font-size: 16px;" th:text="${email}"></p>
+
+    <h2>My Accounts</h2>
+
+    <p th:if="${accounts.empty}">You have no accounts yet.</p>
+
+    <div th:each="account : ${accounts}">
+        <p>
+            <strong th:text="${account.accountNumber}"></strong> —
+            <span th:text="${account.balance}"></span>
+            <span th:text="${account.currency}"></span>
+            &nbsp;
+            <a th:href="@{/dashboard/accounts/{id}(id=${account.id})}">Details</a>
+        </p>
+    </div>
+
+    <a th:href="@{/dashboard/accounts/new}">+ Open new account</a>
 
     <form method="post" th:action="@{/logout}" style="margin-top: 40px;">
         <button type="submit">Logout</button>

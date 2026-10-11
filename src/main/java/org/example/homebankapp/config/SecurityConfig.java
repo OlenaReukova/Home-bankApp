@@ -44,12 +44,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/bank/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/bank/**", "/accounts/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/css/**", "/actuator/**").permitAll()
                         .requestMatchers("/bank/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/dashboard/**").hasRole("USER")
+                        .requestMatchers("/accounts/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/dashboard/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

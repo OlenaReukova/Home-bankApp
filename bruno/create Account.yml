@@ -1,0 +1,23 @@
+info:
+  name: create Account
+  type: http
+  seq: 10
+
+http:
+  method: POST
+  url: "{{baseUrl}}/accounts"
+  body:
+    type: json
+    data: |-
+      {
+        "userId": "{{userId}}",
+        "currency": "USD",
+        "initialBalance": 0
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

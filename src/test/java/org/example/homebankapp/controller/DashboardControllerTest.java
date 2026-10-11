@@ -3,6 +3,7 @@ package org.example.homebankapp.controller;
 import org.example.homebankapp.config.CustomUserDetailsService;
 import org.example.homebankapp.config.SecurityConfig;
 import org.example.homebankapp.controller.response.UserResponse;
+import org.example.homebankapp.service.BankAccountService;
 import org.example.homebankapp.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import org.springframework.data.domain.Page;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -27,12 +32,16 @@ class DashboardControllerTest {
     private UserService userService;
 
     @MockitoBean
+    private BankAccountService bankAccountService;
+
+    @MockitoBean
     private CustomUserDetailsService customUserDetailsService;
 
     @Test
     void dashboard_shouldReturnDashboardView_whenAuthenticated() throws Exception {
         when(userService.getUserByEmail("user@bank.com"))
-                .thenReturn(new UserResponse("John", "Doe", "user@bank.com", "+44123456789"));
+                .thenReturn(new UserResponse("user-1", "John", "Doe", "user@bank.com", "+44123456789"));
+        when(bankAccountService.getAccountsByUserId(eq("user-1"), any())).thenReturn(Page.empty());
 
         mockMvc.perform(get("/dashboard").with(user("user@bank.com").roles("USER")))
                 .andExpect(status().isOk())

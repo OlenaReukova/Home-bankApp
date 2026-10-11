@@ -34,7 +34,7 @@ label {
     color: #333;
 }
 
-input {
+input, select {
     width: 100%;
     box-sizing: border-box;
     padding: 16px 18px;
@@ -43,13 +43,15 @@ input {
     background: #fff;
     font-size: 16px;
     transition: all 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
-input:hover {
+input:hover, select:hover {
     border-color: #999;
 }
 
-input:focus {
+input:focus, select:focus {
     outline: none;
     border-color: #26314B;
 }
