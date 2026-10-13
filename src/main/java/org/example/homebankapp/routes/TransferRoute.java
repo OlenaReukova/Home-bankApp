@@ -14,6 +14,7 @@ public class TransferRoute extends RouteBuilder {
         from("direct:transfer")
                 .routeId("transfer-route")
                 .log("Camel received transfer: ${body}")
+                .wireTap("direct:transferAudit")
                 .choice()
                 .when(exchange -> {
                     TransferMessage message =
@@ -35,5 +36,9 @@ public class TransferRoute extends RouteBuilder {
         from("direct:largeTransfer")
                 .routeId("large-transfer-route")
                 .log("Large transfer: manual review required- ${body} GBP");
+
+        from("direct:transferAudit")
+                .routeId("transfer-audit-route")
+                .log("AUDIT: transfer received - ${body}");
     }
 }
