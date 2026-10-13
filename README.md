@@ -24,6 +24,8 @@ MongoDB persistence, Spring Security, and role-based access control.
 - Request correlation via `X-Correlation-ID` header propagation
 - Actuator health endpoints (liveness, readiness)
 - Browser-based dashboard (Thymeleaf) and a JSON REST API
+- Asynchronous transfer processing via RabbitMQ queue
+- Apache Camel pipeline with Content-Based Router and Wire Tap patterns
 
 ---
 
@@ -41,6 +43,8 @@ MongoDB persistence, Spring Security, and role-based access control.
 | Boilerplate      | Lombok                                       |
 | Monitoring       | Spring Boot Actuator                         |
 | Configuration    | Spring Dotenv (`.env` file support)          |
+| Messaging        | Spring AMQP + RabbitMQ                       |
+| Integration      | Apache Camel 4.14.5                          |
 | Infrastructure   | Docker Compose (MongoDB, RabbitMQ)           |
 | Build tool       | Gradle (wrapper included)                    |
 | API testing      | Bruno collection                             |
@@ -214,6 +218,71 @@ Supported currencies: `USD`, `EUR`, `GBP`
 
 ---
 
+## Asynchronous Transfer Processing
+
+The application uses **RabbitMQ, Spring AMQP, and Apache Camel** to implement message-driven transfer processing.
+
+### Architecture
+
+```text
+TransferProducer
+       |
+       v
+RabbitMQ Queue (transfers.pending)
+       |
+       v
+TransferConsumer (@RabbitListener)
+       |
+       v
+JSON Deserialization (TransferMessage)
+       |
+       v
+Apache Camel (direct:transfer)
+       |
+       +---- Wire Tap ----> Transfer Audit
+       |
+       v
+Content-Based Router
+       |
+       +---- Amount < 1000 GBP ----> Small Transfer Processing
+       |
+       +---- Amount >= 1000 GBP ---> Manual Review Required
+```
+
+### RabbitMQ Integration
+
+- **TransferProducer** publishes transfer messages to the `transfers.pending` RabbitMQ queue using Spring AMQP's `RabbitTemplate`.
+- **TransferConsumer** listens for incoming messages using `@RabbitListener`.
+- Incoming JSON messages are deserialised into a `TransferMessage` Java record using Jackson.
+- The consumer forwards the resulting object to Apache Camel using `ProducerTemplate` and the `direct:transfer` endpoint.
+
+This separates message transport from transfer routing logic.
+
+### Apache Camel Integration
+
+The application uses Apache Camel's Enterprise Integration Patterns (EIPs) to process incoming transfers.
+
+**Content-Based Router**
+
+The `choice()` and `when()` DSL operations route transfers according to their amount:
+
+- Transfers below **1,000 GBP** are sent to `direct:smallTransfer` for automatic processing.
+- Transfers of **1,000 GBP or more** are sent to `direct:largeTransfer` for manual review.
+
+**Wire Tap**
+
+The `wireTap()` EIP sends a copy of each transfer exchange to `direct:transferAudit` whilst the main route continues processing.
+
+- Audit processing runs asynchronously using Camel-managed threads.
+- The audit route currently logs transfer information.
+- Wire Tap uses a shallow copy of the exchange by default, so the message body may be shared between the main and audit routes.
+
+### Current Scope
+
+The messaging pipeline currently demonstrates asynchronous message delivery, conditional routing, and audit logging. Small-transfer processing and manual review are represented by dedicated Camel routes and log statements; actual transfer execution, persistent audit storage, and a manual review workflow are not yet implemented.
+
+---
+
 ## Testing
 
 Run all tests:
@@ -222,15 +291,23 @@ Run all tests:
 ./gradlew test
 ```
 
+The test suite covers service unit tests, controller slice tests (`@WebMvcTest`), a full context test (`@SpringBootTest`), and Apache Camel route tests using `AdviceWith` and `MockEndpoint`.
+
+Camel route tests:
+- Verify routing for small transfers, large transfers, and the boundary value of exactly 1,000 GBP
+- Use `AdviceWith` to intercept endpoints and redirect messages to mock endpoints
+- Run with a standalone `CamelContext` — no running RabbitMQ or MongoDB instance required
+
 A **Bruno** collection is available in the `bruno/` directory for manual API testing. Open the collection in Bruno and
 configure the `local` environment with your `baseUrl`, `userId` and `accountId` variables before use.
 
 ---
 
-## Work in Progress
+## Roadmap
 
-- RabbitMQ Messaging
-- Apache Camel and Integration Patterns
+- Dead Letter Channel for failed transfers
+- Persistent audit log storage in MongoDB
+- Manual review workflow for large transfers
 - Currency conversion between accounts
 - Account statement export
 - Frontend improvements and enhanced form validation feedback
