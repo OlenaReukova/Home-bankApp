@@ -13,6 +13,12 @@ public class TransferRoute extends RouteBuilder {
     public void configure() {
         from("direct:transfer")
                 .routeId("transfer-route")
+                .process(exchange -> {
+                    Thread currentThread = Thread.currentThread();
+                    String threadName = currentThread.getName();
+                    long threadId = currentThread.threadId();
+                    System.out.println("MAIN THREAD: " + threadName + ", id=" + threadId);
+                })
                 .log("Camel received transfer: ${body}")
                 .wireTap("direct:transferAudit")
                 .choice()
@@ -31,7 +37,7 @@ public class TransferRoute extends RouteBuilder {
                 .end();
         from("direct:smallTransfer")
                 .routeId("small-transfer-route")
-                .log("Small transfer: aotomatic processing - ${body} GBP");
+                .log("Small transfer: automatic processing - ${body} GBP");
 
         from("direct:largeTransfer")
                 .routeId("large-transfer-route")
@@ -39,6 +45,12 @@ public class TransferRoute extends RouteBuilder {
 
         from("direct:transferAudit")
                 .routeId("transfer-audit-route")
+                .process(exchange -> {
+                    Thread currentThread = Thread.currentThread();
+                    String threadName = currentThread.getName();
+                    long threadId = currentThread.threadId();
+                    System.out.println("AUDIT THREAD: " + threadName + ", id=" + threadId);
+                })
                 .log("AUDIT: transfer received - ${body}");
     }
 }

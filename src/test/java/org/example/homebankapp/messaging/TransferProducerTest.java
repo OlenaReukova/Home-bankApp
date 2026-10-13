@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.math.BigDecimal;
+
 @SpringBootTest
 @ActiveProfiles("test")
 class TransferProducerTest {
@@ -14,6 +16,11 @@ class TransferProducerTest {
 
     @Test
     void shouldSendTransferMessage() {
-        transferProducer.sendTransfer("Transfer requested: 100 GBP");
+        TransferMessage message = new TransferMessage(
+                "ACC-001",
+                "ACC-002",
+                new BigDecimal("100.00")
+        );
+        transferProducer.sendTransfer(message);
     }
 }
