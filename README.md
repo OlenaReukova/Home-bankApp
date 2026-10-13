@@ -2,11 +2,11 @@
 
 ## Overview
 
-Home Bank App is a personal banking application built with Spring Boot. It provides user account management, bank
+Home Bank App is a personal banking application MVP built with Spring Boot. It provides user account management, bank
 account operations (deposit, withdraw, transfer) and a transaction history, accessible via both a browser-based UI and a
 REST API.
 
-The application is intended as a learning and portfolio project demonstrating a layered Spring Boot architecture with
+The application is intended as a learning project demonstrating a layered Spring Boot architecture with
 MongoDB persistence, Spring Security, and role-based access control.
 
 ---
@@ -303,7 +303,7 @@ configure the `local` environment with your `baseUrl`, `userId` and `accountId` 
 
 ---
 
-## Roadmap
+## Work in Progress
 
 - Dead Letter Channel for failed transfers
 - Persistent audit log storage in MongoDB
